@@ -749,6 +749,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             final String separator = System.getProperty("file.separator");
             final String iwad = test.substring(1 + test.lastIndexOf(separator));
             doomwaddir = test.substring(0, 1 + test.lastIndexOf(separator));
+
             final GameMode attempt = DoomVersion.tryOnlyOne(iwad, doomwaddir);
             // Note: at this point we can't distinguish between "doom" retail
             // and "doom" ultimate yet.
