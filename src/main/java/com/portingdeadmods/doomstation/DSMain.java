@@ -17,12 +17,17 @@ public class DSMain
     public static final String MODID = "doomstation";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    String[] args = {"-iwad DOOMU.WAD"};
-
     public DSMain(IEventBus modEventBus, ModContainer modContainer) throws IOException {
         RegisterStuff.CREATIVE_MODE_TABS.register(modEventBus);
         RegisterStuff.ITEMS.register(modEventBus);
-        Engine.main(args);
+        new Thread(() -> {
+            try {
+                Engine.main(new String[]{});
+                System.out.println("Engine started");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 

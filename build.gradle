@@ -112,12 +112,7 @@ configurations {
 }
 
 dependencies {
-
-
-
-
-
-
+    implementation sourceSets.doom.output
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -177,7 +172,29 @@ sourceSets {
     main {
         java {
             // Include the default `src/main/java` and the additional `src/doom` folder
-            srcDirs = ['src/main/java', 'src/doom']
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+sourceSets {
+    doom {
+        java {
+            srcDirs = ['src/doom']
+        }
+        resources {
+            srcDirs = ['src/doom/resources']
+        }
+    }
+}
+
+neoForge {
+    addModdingDependenciesTo sourceSets.doom
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.doom
         }
     }
 }
