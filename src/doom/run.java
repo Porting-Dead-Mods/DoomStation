@@ -8,6 +8,6 @@ public class run {
     static String[] empty = {};
 
     public static void main(String[] args) throws IOException {
-        Engine.main(commandVariables);
+        Engine.main(empty);
     }
 }

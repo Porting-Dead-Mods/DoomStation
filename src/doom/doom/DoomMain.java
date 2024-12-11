@@ -772,10 +772,10 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
             // None found, using current.
             if (!eval(doomwaddir)) {
-                doomwaddir = ".";
+                doomwaddir = System.getProperty("user.dir") + "\\src\\doom\\wads";
             }
 
-            doomwaddir = "C:/Users/Abdel/IdeaProjects/DoomStation/src/doom/wads/";
+            System.out.println("DOOMWADDIR: " + doomwaddir);
 
         }
 
