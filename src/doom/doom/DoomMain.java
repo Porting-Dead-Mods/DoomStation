@@ -743,6 +743,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // First, check for -iwad parameter.
         // If valid, then it trumps all others.
         if (cVarManager.present(CommandVariable.IWAD)) {
+            System.out.println("IWAD specified.");
             LOGGER.log(Level.INFO, "-iwad specified. Will be used with priority");
             // It might be quoted.
             final String test = C2JUtils.unquoteIfQuoted(cVarManager.get(CommandVariable.IWAD, String.class, 0).get(), '"');
@@ -750,6 +751,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             final String iwad = test.substring(1 + test.lastIndexOf(separator));
             doomwaddir = test.substring(0, 1 + test.lastIndexOf(separator));
 
+            System.out.println("IWAD: " + iwad);
+            System.out.println("DOOMWADDIR: " + doomwaddir);
             final GameMode attempt = DoomVersion.tryOnlyOne(iwad, doomwaddir);
             // Note: at this point we can't distinguish between "doom" retail
             // and "doom" ultimate yet.
@@ -771,6 +774,9 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             if (!eval(doomwaddir)) {
                 doomwaddir = ".";
             }
+
+            doomwaddir = "C:/Users/Abdel/IdeaProjects/DoomStation/src/doom/wads/";
+
         }
 
         for (GameMode mode : GameMode.values()) {

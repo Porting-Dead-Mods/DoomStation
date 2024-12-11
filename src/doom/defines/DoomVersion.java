@@ -29,7 +29,7 @@ public enum DoomVersion {
     PLUTONIA_WAD("plutonia.wad"),
     TNT_WAD("tnt.wad"),
     XBLA_WAD("xbla.wad"),
-    DOOMU_WAD("doomu.wad"),
+    DOOMU_WAD("wads/doomu.wad"),
     UDOOM_WAD("udoom.wad"),
     DOOM_WAD("doom.wad"),
     DOOM1_WAD("doom1.wad"),
