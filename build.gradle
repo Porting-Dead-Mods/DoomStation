@@ -24,6 +24,23 @@ base {
     archivesName = mod_id
 }
 
+sourceSets {
+    /*
+    main {
+        java {
+            // Include the default `src/main/java` and the additional `src/doom` folder
+            srcDirs = ['src/main/java']
+        }
+    }
+     */
+    doom {
+        java {
+            srcDirs = ['src/doom']
+        }
+    }
+}
+
+
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -89,13 +106,12 @@ neoForge {
         }
     }
 
+    addModdingDependenciesTo sourceSets.doom
+
     mods {
-        // define mod <-> source bindings
-        // these are used to tell the game which sources are for which mod
-        // mostly optional in a single mod project
-        // but multi mod projects should define one per mod
         "${mod_id}" {
-            sourceSet(sourceSets.main)
+            sourceSet sourceSets.main
+            sourceSet sourceSets.doom
         }
     }
 }
@@ -165,36 +181,5 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            // Include the default `src/main/java` and the additional `src/doom` folder
-            srcDirs = ['src/main/java']
-        }
-    }
-}
-
-sourceSets {
-    doom {
-        java {
-            srcDirs = ['src/doom']
-        }
-        resources {
-            srcDirs = ['src/doom/resources']
-        }
-    }
-}
-
-neoForge {
-    addModdingDependenciesTo sourceSets.doom
-
-    mods {
-        "${mod_id}" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.doom
-        }
     }
 }
