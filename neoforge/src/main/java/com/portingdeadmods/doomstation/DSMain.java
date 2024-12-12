@@ -1,6 +1,8 @@
 package com.portingdeadmods.doomstation;
 
 import com.portingdeadmods.doomstation.registry.RegisterStuff;
+import net.minecraft.CrashReport;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -19,11 +21,12 @@ public class DSMain
         RegisterStuff.CREATIVE_MODE_TABS.register(modEventBus);
         RegisterStuff.ITEMS.register(modEventBus);
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+
         Thread doomThread = new Thread(() -> {
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 mochadoom.Engine.main(new String[]{});
-                System.out.println("Engine started");
+                LOGGER.info("MochaDoom Engine started");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -31,6 +34,7 @@ public class DSMain
             }
         });
         doomThread.start();
+
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
