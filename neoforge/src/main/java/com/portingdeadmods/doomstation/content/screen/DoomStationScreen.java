@@ -9,4 +9,9 @@ public class DoomStationScreen extends Screen {
         super(title);
         this.type = title.toString();
     }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 }
