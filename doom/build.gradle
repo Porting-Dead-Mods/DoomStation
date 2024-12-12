@@ -1,0 +1,84 @@
+import org.apache.tools.ant.filters.FixCrLfFilter
+
+plugins {
+    id 'base'
+    id 'application'
+    id 'java'
+    id 'distribution'
+}
+
+base {
+    archivesName.set('mochadoom')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+ext {
+    javaMainClass = 'mochadoom.Engine'
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': javaMainClass)
+    }
+}
+
+application {
+    mainClass.set(javaMainClass)
+}
+
+distributions {
+    main {
+        distributionBaseName = 'mochadoom'
+        contents {
+            from jar
+            from sourcesJar
+            from 'wads'
+            from('scripts') {
+                include 'mochadoom*.sh'
+                filter(FixCrLfFilter, eol: FixCrLfFilter.CrLf.newInstance('unix'))
+            }
+            from('scripts') {
+                include 'mochadoom*.bat'
+                filter(FixCrLfFilter, eol: FixCrLfFilter.CrLf.newInstance('dos'))
+            }
+            from("$projectDir") {
+                include 'LICENSE.TXT'
+                include 'README.md'
+                include 'CONFIG.md'
+                include 'PROGRAMMING.md'
+                include '.doomrc'
+                include 'default.cfg'
+                include 'classic.cfg'
+                include 'modern.cfg'
+                include 'mochadoom.cfg'
+            }
+            into '/'
+        }
+    }
+}
+
+startScripts.enabled = false
+distTar.enabled = false
+distZip {
+    eachFile { file ->
+        if (file.path.matches('^(bin|lib)/.*$')) {
+            file.exclude()
+        }
+    }
+}
+
+tasks.withType(JavaCompile).all {
+    options.compilerArgs.add('-Xlint:unchecked')
+    options.compilerArgs.add('-Xlint:deprecation')
+}
