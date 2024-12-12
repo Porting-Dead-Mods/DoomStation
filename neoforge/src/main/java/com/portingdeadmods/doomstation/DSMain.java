@@ -9,6 +9,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod(DSMain.MODID)
 public class DSMain
@@ -22,15 +23,23 @@ public class DSMain
 
         System.setProperty("java.awt.headless", "false");
 
-        new Thread(() -> {
-            try {
-                Engine.main(new String[]{});
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        startDoom();
 
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
+
+
+    public static void startDoom(){
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "java", "-cp", System.getProperty("java.class.path"), "mochadoom.Engine"
+        );
+        processBuilder.inheritIO();
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            LOGGER.error("Error starting Doom process", e);
+        }
+    }
+
 
 }
