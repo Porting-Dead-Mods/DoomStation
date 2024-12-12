@@ -133,19 +133,21 @@ import i.IDiskDrawer;
 import i.IDoomSystem;
 import i.Strings;
 import java.awt.Rectangle;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import m.DelegateRandom;
 import m.IDoomMenu;
 import m.Menu;
@@ -729,6 +731,71 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         wadfiles[numwadfiles] = file;
     }
 
+    /*
+    * Just a simple directory checks
+     */
+    private boolean doesFolderExist(Path path) {
+        return (Files.exists(path) && Files.isDirectory(path));
+    }
+
+    private void createFolder(Path path) {
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isFolderEmpty(Path path) {
+        try (Stream<Path> entries = Files.list(path)) {
+            return !entries.findFirst().isPresent();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void downloadWads(Path wadDir) {
+        // These are just default WADs, players can still put custom WADs into instance/wads <3
+        final String[] WAD_URLS = {
+                // All the WADs hosted in our repo
+                "https://raw.githubusercontent.com/Porting-Dead-Mods/DoomStation/refs/heads/main/doom/wads/doom1.md5",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/wads/doom1.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/wads/doom-wad-shareware-license.txt",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/ABBEY.WAD",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/ZARNEK.WAD",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/cross.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/easy.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/easy2.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/frugal.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/grid.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/lotsofmonsters.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/masked.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/onesquare.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/orbit.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/penta.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/piano.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/sprites.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/swdoor.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/test272.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/trigon.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/web.wad",
+                "https://github.com/Porting-Dead-Mods/DoomStation/raw/refs/heads/main/doom/pwads/weird.wad"
+
+                // Any PR recommendations below here please
+        };
+
+        for (String wadUrl : WAD_URLS) {
+            try (InputStream in = new URL(wadUrl).openStream()) {
+                Path wadPath = wadDir.resolve(Paths.get(new URL(wadUrl).getPath()).getFileName());
+                Files.copy(in, wadPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Downloaded: " + wadPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * IdentifyVersion
      * Checks availability of IWAD files by name,
@@ -737,7 +804,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
      */
     public final String IdentifyVersion() {
         String doomwaddir;
-        // By default.
+
+        // Use english by default.
         language = Language_t.english;
 
         // First, check for -iwad parameter.
@@ -773,6 +841,20 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             }
 
             System.out.println("DOOMWADDIR: " + doomwaddir);
+
+            if (!doesFolderExist(Paths.get(doomwaddir))) {
+                LOGGER.log(Level.INFO, "WAD directory doesn't exist, creating it...");
+
+                createFolder(Paths.get(doomwaddir));
+                downloadWads(Paths.get(doomwaddir));
+
+            } else if (isFolderEmpty(Paths.get(doomwaddir))) {
+                LOGGER.log(Level.INFO, "WAD directory is empty, downloading WADs...");
+
+                downloadWads(Paths.get(doomwaddir));
+            } else {
+                LOGGER.log(Level.INFO, "WADs are present, loading Mocha Doom...");
+            }
         }
 
         for (GameMode mode : GameMode.values()) {
