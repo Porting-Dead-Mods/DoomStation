@@ -735,7 +735,12 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     * Just a simple directory checks
      */
     private boolean doesFolderExist(Path path) {
-        return (Files.exists(path) && Files.isDirectory(path));
+        try {
+            return (Files.exists(path) && Files.isDirectory(path));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void createFolder(Path path) {
