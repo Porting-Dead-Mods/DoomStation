@@ -769,6 +769,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             // None found, using current.
             if (!eval(doomwaddir)) {
                 doomwaddir = System.getProperty("user.dir") + "\\wads";
+                this.tempWadDir = doomwaddir;
             }
 
             System.out.println("DOOMWADDIR: " + doomwaddir);
@@ -2639,10 +2640,15 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
      *  them have Init() methods which are NOT yet safe to call.
      *
      */
+
+    String tempWadDir = null;
+
     @SuppressWarnings("LeakingThisInConstructor")
     public DoomMain() throws IOException {
         // Init game status...
         super();
+
+        this.tempWadDir = "Testing 1234";
 
         // Init players
         players = new player_t[MAXPLAYERS];
@@ -2709,8 +2715,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             wadLoader.InitMultipleFiles(wadfiles);
         } catch (Exception e1) {
             LOGGER.log(Level.SEVERE, "Could not init WAD files", e1);
+            LOGGER.log(Level.SEVERE, "Specified WAD path was: " + this.tempWadDir);
         }
-
         // Video Renderer
         this.graphicSystem = RendererFactory.<T, V>newBuilder()
                 .setVideoScale(vs).setBppMode(bppMode).setWadLoader(wadLoader)

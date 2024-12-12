@@ -19,6 +19,9 @@ public class DSMain
     public DSMain(IEventBus modEventBus, ModContainer modContainer) throws IOException {
         RegisterStuff.CREATIVE_MODE_TABS.register(modEventBus);
         RegisterStuff.ITEMS.register(modEventBus);
+
+        System.setProperty("java.awt.headless", "false");
+
         new Thread(() -> {
             try {
                 Engine.main(new String[]{});
