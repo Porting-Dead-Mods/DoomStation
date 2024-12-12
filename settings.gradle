@@ -11,5 +11,5 @@ plugins {
 }
 rootProject.name = 'DoomStation'
 
-include ('doom')
+include('doom')
 include('neoforge')
