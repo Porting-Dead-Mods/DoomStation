@@ -31,6 +31,9 @@ import static g.Signals.ScanCode.SC_ESCAPE;
 import static g.Signals.ScanCode.SC_LALT;
 import static g.Signals.ScanCode.SC_PAUSE;
 import i.Strings;
+import utils.GraphicsUtils;
+
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -176,5 +179,15 @@ public class Engine {
 
     public static ConfigManager getConfig() {
         return getEngine().cm;
+    }
+
+    public static BufferedImage captureFrame() {
+        return GraphicsUtils.toBufferedImage(
+                getEngine().windowController.getImage()
+        );
+    }
+
+    public int getOpenGLTexture() {
+        return GraphicsUtils.convertAWTtoOpenGL(captureFrame());
     }
 }

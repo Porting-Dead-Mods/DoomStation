@@ -11,6 +11,10 @@ base {
     archivesName.set('mochadoom')
 }
 
+repositories {
+    mavenCentral()
+}
+
 sourceSets {
     main {
         java {
@@ -82,4 +86,18 @@ distZip {
 tasks.withType(JavaCompile).all {
     options.compilerArgs.add('-Xlint:unchecked')
     options.compilerArgs.add('-Xlint:deprecation')
+}
+
+project.ext.lwjglVersion = "3.3.3"
+project.ext.lwjglNatives = "natives-windows"
+
+dependencies {
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 }

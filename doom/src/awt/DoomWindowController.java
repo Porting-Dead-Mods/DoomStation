@@ -95,6 +95,10 @@ public class DoomWindowController<E extends Component & DoomWindow<E>, H extends
         doomFrame.update();
     }
 
+    public Image getImage() {
+        return doomFrame.getImage();
+    }
+
     public EventObserver<H> getObserver() {
         return observer;
     }

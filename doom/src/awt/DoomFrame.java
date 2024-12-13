@@ -151,6 +151,11 @@ public class DoomFrame<Window extends Component & DoomWindow<Window>> extends JF
         }
     }
 
+    // Same as update() but just fetch the image itself
+    public Image getImage() {
+        return imageSupplier.get();
+    }
+
     /**
      * Techdemo v1.3: Mac OSX fix, compatible with Windows and Linux.
      * Should probably run just once. Overhead is minimal
